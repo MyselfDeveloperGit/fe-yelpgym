@@ -16,7 +16,7 @@ const Gyms = () => {
         <h1>All Gyms</h1>
         {gyms?.length ? (
           gyms.map((gym, idx) => (
-            <div className="card mb-3">
+            <div className="card mb-3" key={idx}>
               <div className="row">
                 <div className="col-md-4">
                   <img src={gym.image} className="img-fluid" />

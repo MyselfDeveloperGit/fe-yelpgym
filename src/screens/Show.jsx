@@ -11,7 +11,7 @@ const Show = () => {
     axios.get(`/gyms/${gymid}`).then((res) => {
       setGym(res.data.gym);
     });
-  });
+  }, []);
 
   const onDeleteClick = () => {
     axios.get(`/gyms/${gymid}/delete`).then((res) => {
