@@ -1,6 +1,9 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import { Form, Field } from "react-final-form";
 import { useNavigate, useParams } from "react-router";
+import * as Validators from "../helpers/validators";
+import ValidationDiv from "../components/ValidationDiv";
 
 const Edit = () => {
   const [gym, setGym] = useState(undefined);
@@ -12,67 +15,102 @@ const Edit = () => {
     });
   }, []);
 
-  const onFormSubmit = async (e) => {
-    e.preventDefault();
-    const gym = {
-      title: e.target[0].value,
-      location: e.target[1].value,
-      image: e.target[2].value,
-      price: e.target[3].value,
-      description: e.target[4].value,
-    };
-    console.log(gym);
+  const onFormSubmit = async (values) => {
+    const gym = { ...values };
     await axios
-      .post(`http://localhost:3001/gyms/${gymid}/update`, gym)
+      .post(`http://localhost:3001/gyms/${gymid}/update`, { gym })
       .then((res) => {
-        console.log(res.data);
         navigate(`/gym/${res.data}`);
+      })
+      .catch((error) => {
+        navigate("/error");
       });
   };
 
-  return (
-    <>
-      {gym ? (
-        <div className="row">
-          <h1 className="text-center">Edit gym</h1>
-          <div className="col-6 offset-3">
-            <form onSubmit={onFormSubmit}>
+  const EditGymForm = () => (
+    <Form
+      onSubmit={onFormSubmit}
+      render={({ handleSubmit, invalid, pristine }) => (
+        <form onSubmit={handleSubmit}>
+          <Field
+            name="title"
+            validate={Validators.required}
+            initialValue={gym.title}
+          >
+            {({ input, meta }) => (
               <div className="mb-3">
                 <label className="form-label" htmlFor="title">
                   Title
                 </label>
                 <input
-                  className="form-control"
+                  {...input}
+                  className={`form-control ${
+                    meta.touched ? (meta.error ? "is-invalid" : "is-valid") : ""
+                  }`}
                   type="text"
                   id="title"
                   name="title"
-                  defaultValue={gym.title || ""}
                 />
+                <ValidationDiv meta={meta} />
               </div>
+            )}
+          </Field>
+          <Field
+            name="location"
+            validate={Validators.required}
+            initialValue={gym.location}
+          >
+            {({ input, meta }) => (
               <div className="mb-3">
                 <label className="form-label" htmlFor="location">
                   Location
                 </label>
                 <input
-                  className="form-control"
+                  {...input}
+                  className={`form-control ${
+                    meta.touched ? (meta.error ? "is-invalid" : "is-valid") : ""
+                  }`}
                   type="text"
                   id="location"
                   name="location"
-                  defaultValue={gym.location || ""}
                 />
+                <ValidationDiv meta={meta} />
               </div>
+            )}
+          </Field>
+          <Field
+            name="image"
+            validate={Validators.required}
+            initialValue={gym.image}
+          >
+            {({ input, meta }) => (
               <div className="mb-3">
                 <label className="form-label" htmlFor="image">
                   Image
                 </label>
                 <input
-                  className="form-control"
+                  {...input}
+                  className={`form-control ${
+                    meta.touched ? (meta.error ? "is-invalid" : "is-valid") : ""
+                  }`}
                   type="text"
                   id="image"
                   name="image"
-                  defaultValue={gym.image || ""}
                 />
+                <ValidationDiv meta={meta} />
               </div>
+            )}
+          </Field>
+          <Field
+            name="price"
+            initialValue={gym.price}
+            validate={Validators.composeValidators(
+              Validators.required,
+              Validators.mustBeANumber,
+              Validators.minValue(10)
+            )}
+          >
+            {({ input, meta }) => (
               <div className="mb-3">
                 <label className="form-label" htmlFor="price">
                   Price
@@ -82,30 +120,62 @@ const Edit = () => {
                     $
                   </span>
                   <input
-                    className="form-control"
+                    {...input}
+                    className={`form-control ${
+                      meta.touched
+                        ? meta.error
+                          ? "is-invalid"
+                          : "is-valid"
+                        : ""
+                    }`}
                     type="text"
                     id="price"
                     name="price"
-                    defaultValue={gym.price || ""}
                   />
+                  <ValidationDiv meta={meta} />
                 </div>
               </div>
+            )}
+          </Field>
+          <Field
+            name="description"
+            validate={Validators.required}
+            initialValue={gym.description}
+          >
+            {({ input, meta }) => (
               <div className="mb-3">
                 <label className="form-label" htmlFor="description">
                   Description
                 </label>
                 <textarea
-                  className="form-control"
+                  {...input}
+                  className={`form-control ${
+                    meta.touched ? (meta.error ? "is-invalid" : "is-valid") : ""
+                  }`}
                   type="text"
                   id="description"
                   name="description"
-                  defaultValue={gym.description || ""}
                 />
               </div>
-              <div className="mb-3">
-                <button className="btn btn-success">Submit</button>
-              </div>
-            </form>
+            )}
+          </Field>
+          <div className="mb-3">
+            <button className="btn btn-success" disabled={invalid || pristine}>
+              Submit
+            </button>
+          </div>
+        </form>
+      )}
+    />
+  );
+
+  return (
+    <>
+      {gym ? (
+        <div className="row">
+          <h1 className="text-center">Edit gym</h1>
+          <div className="col-6 offset-3">
+            <EditGymForm />
           </div>
         </div>
       ) : null}

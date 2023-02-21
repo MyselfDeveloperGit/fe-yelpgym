@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import axios from "axios";
 import LandingPage from "./screens/LandingPage";
 import Gyms from "./screens/Gyms";
 import Show from "./screens/Show";
 import New from "./screens/New";
 import Edit from "./screens/Edit";
-import axios from "axios";
+import ErrorScreen from "./screens/ErrorScreen";
 import Boilerplate from "./partials/Boilerplate";
 
 axios.defaults.baseURL = "http://localhost:3001";
@@ -19,6 +20,7 @@ function App() {
           <Route path="/gym/:gymid" element={<Show />} />
           <Route path="/gym/:gymid/edit" element={<Edit />} />
           <Route path="/new" element={<New />} />
+          <Route path="/error" element={<ErrorScreen />} />
         </Route>
       </Routes>
     </BrowserRouter>
