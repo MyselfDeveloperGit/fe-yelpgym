@@ -9,6 +9,7 @@ import ErrorScreen from "./screens/ErrorScreen";
 import Boilerplate from "./partials/Boilerplate";
 
 axios.defaults.baseURL = "http://localhost:3001";
+axios.defaults.withCredentials = true;
 
 function App() {
   return (
